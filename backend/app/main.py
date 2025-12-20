@@ -1,15 +1,27 @@
 # app/main.py
+
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .config import settings
-from .database import Base, engine
-from .routers import projects as projects_router
+from app.config import settings
+from app.database import Base, engine
 
-# Create DB tables on startup (simple for MVP)
-Base.metadata.create_all(bind=engine)
+# Routers
+from app.routers import (
+    projects,
+    plans,
+    photos,
+    placements,
+    review,
+    gps,
+    detections,
+    export,
+)
 
+# -----------------------
+# Sentry (before app init)
+# -----------------------
 if settings.sentry_dsn:
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
@@ -17,12 +29,19 @@ if settings.sentry_dsn:
         traces_sample_rate=0.2,
     )
 
+# -----------------------
+# FastAPI App
+# -----------------------
 app = FastAPI(
     title="SiteBuilt Backend",
     version="0.1.0",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
 )
 
-# CORS for frontend (Next.js on Vercel)
+# -----------------------
+# CORS (Vercel frontend)
+# -----------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # tighten later
@@ -31,10 +50,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -----------------------
+# Startup Event
+# -----------------------
+@app.on_event("startup")
+def on_startup():
+    """
+    Create tables if they don't exist.
+    IMPORTANT: No drop_all in production.
+    """
+    Base.metadata.create_all(bind=engine)
 
+# -----------------------
+# Health Check
+# -----------------------
 @app.get("/health", tags=["system"])
 def health():
     return {"status": "ok"}
 
-
-app.include_router(projects_router.router)
+# -----------------------
+# Routers
+# -----------------------
+app.include_router(projects.router)
+app.include_router(plans.router)
+app.include_router(photos.router)
+app.include_router(placements.router)
+app.include_router(review.router)
+app.include_router(gps.router)
+app.include_router(detections.router)
+app.include_router(export.router)
