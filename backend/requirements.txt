@@ -12,3 +12,4 @@ Pillow
 piexif
 supabase
 python-multipart
+alembic

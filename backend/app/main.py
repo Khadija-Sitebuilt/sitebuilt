@@ -19,6 +19,7 @@ from app.routers import (
     export,
 )
 
+
 # -----------------------
 # Sentry (before app init)
 # -----------------------
@@ -39,6 +40,18 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+from app.middleware.sentry_context import SentryContextMiddleware
+
+app.add_middleware(SentryContextMiddleware)
+
+
+
+from fastapi import HTTPException
+from .errors import http_exception_handler, unhandled_exception_handler
+
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(Exception, unhandled_exception_handler)
+
 # -----------------------
 # CORS (Vercel frontend)
 # -----------------------
@@ -53,15 +66,21 @@ app.add_middleware(
 # -----------------------
 # Startup Event
 # -----------------------
-@app.on_event("startup")
-def on_startup():
-    """
-    Create tables if they don't exist.
-    IMPORTANT: No drop_all in production.
-    """
-    Base.metadata.create_all(bind=engine)
-
+# @app.on_event("startup")
+# def on_startup():
+#     """
+#     Create tables if they don't exist.
+#     IMPORTANT: No drop_all in production.
+#     """
 # -----------------------
+@app.get("/", tags=["system"])
+def root():
+    return {
+        "service": "SiteBuilt Backend",
+        "status": "running"
+    }
+
+
 # Health Check
 # -----------------------
 @app.get("/health", tags=["system"])

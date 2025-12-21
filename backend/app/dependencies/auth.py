@@ -2,6 +2,7 @@
 from fastapi import HTTPException, status
 from typing import Optional
 from sqlalchemy.orm import Session
+import sentry_sdk
 
 from .. import models
 
@@ -25,5 +26,13 @@ def get_current_user_id(
         db.add(user)
         db.commit()
         db.refresh(user)
+
+    # ✅ Sentry user context (production-grade)
+    sentry_sdk.set_user(
+        {
+            "id": str(user.id),
+            "auth_uid": user.auth_uid,
+        }
+    )
 
     return user

@@ -60,6 +60,9 @@ class Project(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
+    
+    
+
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

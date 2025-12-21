@@ -8,7 +8,7 @@ from ..schemas.placements import PlacementCreate, PlacementRead
 from .. import models
 
 router = APIRouter(
-    prefix="/photos/{photo_id}/placement",
+    prefix="/photos/{photo_id}/placements",
     tags=["placements"],
 )
 
