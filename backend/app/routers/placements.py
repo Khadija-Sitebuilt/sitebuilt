@@ -53,4 +53,12 @@ def create_placement(
     db.commit()
     db.refresh(placement)
 
-    return placement
+    return PlacementRead(
+        id=placement.id,
+        photo_id=placement.photo_id,
+        plan_id=placement.plan_id,
+        x=placement.x,
+        y=placement.y,
+        placement_method=placement.placement_method.value,
+    )
+
