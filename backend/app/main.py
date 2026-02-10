@@ -16,9 +16,9 @@ from app.routers import (
     review,
     gps,
     detections,
-    export,
+    export,profile as profile_router,
+    reports
 )
-
 
 # -----------------------
 # Sentry (before app init)
@@ -98,3 +98,5 @@ app.include_router(review.router)
 app.include_router(gps.router)
 app.include_router(detections.router)
 app.include_router(export.router)
+app.include_router(profile_router.router)
+app.include_router(reports.router)

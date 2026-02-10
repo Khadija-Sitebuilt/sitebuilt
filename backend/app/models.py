@@ -35,13 +35,15 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     auth_uid = Column(String, unique=True, nullable=False, index=True)
+
+    email = Column(String, nullable=True)
+    full_name = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    projects = relationship(
-        "Project",
-        back_populates="owner",
-        cascade="all, delete-orphan",
-    )
+    projects = relationship("Project", back_populates="owner")
+
 
 
 # ---------------------------
@@ -76,6 +78,12 @@ class Project(Base):
 
     photos = relationship(
         "Photo",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
+
+    reports = relationship(
+        "Report",
         back_populates="project",
         cascade="all, delete-orphan",
     )
@@ -183,3 +191,22 @@ class PhotoPlacement(Base):
 
     photo = relationship("Photo", back_populates="placements")
     plan = relationship("Plan", back_populates="photo_placements")
+
+
+class Report(Base):
+    __tablename__ = "reports"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    project_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    file_url = Column(String, nullable=False)
+    file_type = Column(String, default="html")  # html or pdf
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    project = relationship("Project", back_populates="reports")
