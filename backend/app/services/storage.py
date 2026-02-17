@@ -16,10 +16,16 @@ def upload_file(
     content: bytes,
     content_type: str,
 ):
+    # supabase-py expects "content_type" in file options (snake_case).
+    # We also include other common variants for safety.
     response = supabase.storage.from_(bucket).upload(
         path,
         content,
-        {"content-type": content_type},
+        {
+            "content_type": content_type,
+            "contentType": content_type,
+            "content-type": content_type,
+        },
     )
     return response
 

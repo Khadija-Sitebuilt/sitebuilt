@@ -6,6 +6,7 @@ from sqlalchemy import (
     Column,
     String,
     DateTime,
+    Date,
     ForeignKey,
     Float,
     Enum,
@@ -24,6 +25,12 @@ from .database import Base
 class PlacementMethod(str, enum.Enum):
     manual = "manual"
     gps_suggested = "gps_suggested"
+
+class ProjectStatus(str, enum.Enum):
+    draft = "draft"
+    processing = "processing"
+    for_review = "for_review"
+    completed = "completed"
 
 
 # ---------------------------
@@ -56,6 +63,11 @@ class Project(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
+    location = Column(String, nullable=True)
+    start_date = Column(Date, nullable=True)
+    end_date = Column(Date, nullable=True)
+    project_manager = Column(String, nullable=True)
+    estimated_budget = Column(String, nullable=True)
 
     owner_id = Column(
         UUID(as_uuid=True),
@@ -63,8 +75,11 @@ class Project(Base):
         nullable=False,
     )
     
-    
-
+    status = Column(
+        Enum(ProjectStatus, name="project_status_enum"),
+        nullable=False,
+        default=ProjectStatus.draft,
+    )
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

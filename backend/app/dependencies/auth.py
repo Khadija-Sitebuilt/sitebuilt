@@ -16,8 +16,8 @@ def get_current_user_id(
 
     if not x_user_id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="X-User-Id header is required for now",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="X-User-Id header is required",
         )
 
     user = db.query(models.User).filter_by(auth_uid=x_user_id).first()

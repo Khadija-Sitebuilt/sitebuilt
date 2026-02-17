@@ -44,18 +44,24 @@ def create_report(
 
     plan = plans[0]  # MVP: first plan only
 
+    # Build rows in the same shape as services.export.generate_export
     rows = []
     counter = 1
 
     for photo in photos:
         for placement in photo.placements:
-            rows.append({
-                "num": counter,
-                "timestamp": photo.exif_timestamp,
-                "x": placement.x,
-                "y": placement.y,
-                "method": placement.placement_method.value,
-            })
+            rows.append(
+                {
+                    "num": counter,
+                    "timestamp": photo.exif_timestamp,
+                    "x": placement.x,
+                    "y": placement.y,
+                    "method": placement.placement_method.value,
+                    "photo_url": photo.file_url,
+                    "lat": photo.exif_lat,
+                    "lng": photo.exif_lng,
+                }
+            )
             counter += 1
 
     html_content = build_html(project, plan, rows)

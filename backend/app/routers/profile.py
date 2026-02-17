@@ -18,7 +18,8 @@ def get_profile(
     x_user_id: str = Header(..., alias="X-User-Id"),
 ):
     user = get_current_user_id(x_user_id=x_user_id, db=db)
-    return user
+    # Convert SQLAlchemy model to schema
+    return ProfileRead.from_orm(user)
 
 
 @router.patch("", response_model=ProfileRead)
@@ -35,4 +36,5 @@ def update_profile(
     db.commit()
     db.refresh(user)
 
-    return user
+    # Convert SQLAlchemy model to schema
+    return ProfileRead.from_orm(user)

@@ -47,9 +47,11 @@ app.add_middleware(SentryContextMiddleware)
 
 
 from fastapi import HTTPException
-from .errors import http_exception_handler, unhandled_exception_handler
+from fastapi.exceptions import RequestValidationError
+from .errors import http_exception_handler, request_validation_error_handler, unhandled_exception_handler
 
 app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, request_validation_error_handler)
 app.add_exception_handler(Exception, unhandled_exception_handler)
 
 # -----------------------

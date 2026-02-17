@@ -24,12 +24,16 @@ def create_project(
     db: Session = Depends(get_db),
     x_user_id: str = Header(..., alias="X-User-Id"),
 ):
-    # ⬇️ pass BOTH arguments
     user = get_current_user_id(x_user_id=x_user_id, db=db)
 
     project = models.Project(
         name=payload.name,
         description=payload.description,
+        location=payload.location,
+        start_date=payload.start_date,
+        end_date=payload.end_date,
+        project_manager=payload.project_manager,
+        estimated_budget=payload.estimated_budget,
         owner_id=user.id,
     )
     db.add(project)
@@ -46,7 +50,6 @@ def list_projects(
     db: Session = Depends(get_db),
     x_user_id: str = Header(..., alias="X-User-Id"),
 ):
-    # ⬇️ same here
     user = get_current_user_id(x_user_id=x_user_id, db=db)
 
     projects = (

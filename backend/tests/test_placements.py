@@ -1,26 +1,29 @@
 from fastapi.testclient import TestClient
 from app.main import app
+import uuid
 
 client = TestClient(app)
 
-
-def test_invalid_placement_invalid_plan_id():
-    # plan_id is not an integer → should raise 400
-    res = client.post(
-        "/photos/valid-photo/placement",
-        json={"plan_id": "x", "x": 10, "y": 10, "placement_method": "manual"},
-        headers={"X-User-Id": "test-user"},
-    )
-    assert res.status_code == 400
-    assert res.json()["detail"] == "Invalid plan_id"
-
+HEADERS = {"X-User-Id": "test-user"}
 
 def test_invalid_placement_invalid_photo_id():
-    # photo_id is explicitly "invalid-id" → should raise 404
+    # photo_id should be a valid UUID, but this tests non-existent photo
+    invalid_uuid = str(uuid.uuid4())
     res = client.post(
-        "/photos/invalid-id/placement",
-        json={"plan_id": "123", "x": 10, "y": 10, "placement_method": "manual"},
-        headers={"X-User-Id": "test-user"},
+        f"/photos/{invalid_uuid}/placements",
+        json={"plan_id": str(uuid.uuid4()), "x": 10, "y": 10, "placement_method": "manual"},
+        headers=HEADERS,
     )
     assert res.status_code == 404
-    assert res.json()["detail"] == "Photo not found"
+    assert "Photo not found" in res.json().get("detail", "")
+
+
+def test_invalid_placement_missing_plan_id():
+    # Missing plan_id should raise 422 (validation error)
+    invalid_uuid = str(uuid.uuid4())
+    res = client.post(
+        f"/photos/{invalid_uuid}/placements",
+        json={"x": 10, "y": 10, "placement_method": "manual"},
+        headers=HEADERS,
+    )
+    assert res.status_code == 422
