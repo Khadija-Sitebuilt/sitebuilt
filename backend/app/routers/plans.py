@@ -54,12 +54,19 @@ def upload_plan(
 
     image_url = get_public_url("plans", storage_path)
 
+    # Check if this is the first plan (set as active default)
+    existing_plans_count = db.query(models.Plan).filter(
+        models.Plan.project_id == project_id
+    ).count()
+    is_first_plan = existing_plans_count == 0
+
     plan = models.Plan(
         id=plan_id,
         project_id=project_id,
         file_url=image_url,
         width=width,
         height=height,
+        is_active=is_first_plan,
     )
 
     db.add(plan)
@@ -71,4 +78,5 @@ def upload_plan(
         "file_url": plan.file_url,
         "width": plan.width,
         "height": plan.height,
+        "is_active": plan.is_active,
     }

@@ -11,6 +11,7 @@ from sqlalchemy import (
     Float,
     Enum,
     Integer,
+    Boolean,
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
@@ -125,6 +126,9 @@ class Plan(Base):
     # Raster dimensions (for plan viewer)
     width = Column(Integer, nullable=False)
     height = Column(Integer, nullable=False)
+
+    # Flag to track the active/primary plan for a project
+    is_active = Column(Boolean, default=False, nullable=False)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
