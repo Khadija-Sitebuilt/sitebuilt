@@ -14,6 +14,8 @@ class Settings:
         self.supabase_service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
         self.sentry_dsn = os.getenv("SENTRY_DSN")
         self.demo_user_email = os.getenv("DEMO_USER_EMAIL")
+        self.demo_cleanup_token = os.getenv("DEMO_CLEANUP_TOKEN")
+        self.demo_cleanup_hours = int(os.getenv("DEMO_CLEANUP_HOURS", "24"))
 
         if not self.database_url:
             raise ValueError("DATABASE_URL is required")
