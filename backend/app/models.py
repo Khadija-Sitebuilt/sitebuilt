@@ -225,6 +225,7 @@ class Report(Base):
 
     file_url = Column(String, nullable=False)
     file_type = Column(String, default="html")  # html or pdf
+    accuracy = Column(Float, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

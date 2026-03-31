@@ -1,8 +1,9 @@
 # app/config.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()  # loads .env in local dev
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")  # local dev
 
 class Settings:
     def __init__(self) -> None:
@@ -12,6 +13,7 @@ class Settings:
         self.supabase_anon_key = os.getenv("SUPABASE_ANON_KEY")
         self.supabase_service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
         self.sentry_dsn = os.getenv("SENTRY_DSN")
+        self.demo_user_email = os.getenv("DEMO_USER_EMAIL")
 
         if not self.database_url:
             raise ValueError("DATABASE_URL is required")
