@@ -16,3 +16,6 @@ test.db
 # OS
 .DS_Store
 Thumbs.db
+
+# Large media
+*.mp4
